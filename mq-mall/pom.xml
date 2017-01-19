@@ -50,9 +50,17 @@
             <version>${spring.version}</version>
         </dependency>
 
+        <!-- activemq -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-all</artifactId>
+            <version>${activemq.version}</version>
+        </dependency>
+
+        <!-- activemq连接池 -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
             <version>${activemq.version}</version>
         </dependency>
 

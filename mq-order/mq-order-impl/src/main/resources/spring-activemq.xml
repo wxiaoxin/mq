@@ -3,32 +3,32 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- spring集成activemq配置文件-->
+    <!-- spring集成activemq配置文件 -->
 
-    <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="${activemq.url}" />
+    <!-- spring缓存jms连接 -->
+    <bean id="cachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <!-- activemq连接 -->
+        <property name="targetConnectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="${activemq.url}"/>
+            </bean>
+        </property>
+        <!-- 缓存10个jms session -->
+        <property name="sessionCacheSize" value="10"/>
     </bean>
 
+    <!-- 订单消息队列 -->
     <bean id="orderQueueDestination" class="org.apache.activemq.command.ActiveMQQueue">
         <constructor-arg>
             <value>orderQueueDestination</value>
         </constructor-arg>
     </bean>
 
-    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="defaultDestination" ref="orderQueueDestination" />
-        <property name="receiveTimeout" value="10000" />
-    </bean>
-
-    <!-- 基于消息监听器消费消息队列-->
-    <bean id="orderMessageListener" class="com.king.mq.order.mq.OrderMessageListener" />
-
     <!-- 消息监听器容器 -->
     <bean id="messageListeneContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="destination" ref="orderQueueDestination" />
-        <property name="messageListener" ref="orderMessageListener" />
+        <property name="connectionFactory" ref="cachingConnectionFactory"/>
+        <property name="destination" ref="orderQueueDestination"/>
+        <property name="messageListener" ref="orderMessageListener"/>
     </bean>
 
 </beans>

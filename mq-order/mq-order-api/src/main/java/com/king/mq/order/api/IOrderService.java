@@ -10,6 +10,10 @@ import com.king.mq.order.entity.Order;
 
 public interface IOrderService {
 
+    /**
+     * 保存订单
+     * @param order     订单对象
+     */
     void save(Order order);
 
 }
